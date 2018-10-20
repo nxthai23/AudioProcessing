@@ -1,0 +1,30 @@
+% take input from mic
+r=audiorecorder(44100,16,2)
+record(r)
+
+% stop when done
+stop(r)
+
+% save file as .wav
+filename = 'orig_input.wav'
+r_out = getaudiodata(r)
+audiowrite(filename,r_out,44100)
+
+% make melody for orig_input
+filename1 = 'melody_input.wav' % get melody.wav from internet
+[melody_input,Fs]=audioread(filename1) % get audio data 
+melody_input = melody_input(1:size(orig,1),1:2)  % make melody and orig have same size
+melody = [orig melody_input] % make melody
+filename2 = 'melody.wav'
+audiowrite(filename2, melody, Fs) % make melody.wav from melody data
+
+% fft melody, plot spectrum signal and save as melody_fft.wav after fft
+filename3='melody_fft.wav'
+y = fft(melody,Fs)
+plot(abs(y))
+xlabel('Frequency (Hz)')
+audiowrite(filename3,y,Fs)
+
+%spectrogram
+audioMono = (melody(:,1) + melody(:,2) + melody(:,3) + melody(:,4))/4  % make melody file to 1 channels because spectrogram function in matlab only accepts 1 channels
+spectrogram(audioMono, 256, [], [], Fs, 'yaxis');
